@@ -67,7 +67,6 @@
         }
 
         &:last-child {
-          // display: none;
           @include media($large-screen-up) {
             display: inline-block;
           }
@@ -174,7 +173,6 @@
             }
           }
         }
-      }
       }
     }
   }

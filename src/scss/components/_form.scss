@@ -136,8 +136,6 @@
     width: 60%;
     margin-bottom: 10px;
     margin-right: 5%;
-    //float: left;
-    // height: 100px;
     @include media($large-screen-down) {
       width: 100%;
       margin-right: 0;
@@ -148,7 +146,6 @@
         letter-spacing: 2px;
         text-transform: uppercase;
       }
-
       label {
         display: block;
         float: left;
@@ -178,10 +175,7 @@
         @include media($large-screen-down) {
           width: 100%;
         }
-
-
       }
-
       .required:after {
           content: '';
           vertical-align: super;
@@ -194,11 +188,9 @@
           height: 6px;
           margin: 0 0.3em;
       }
-
       .js-form-type-checkbox input {
         margin-top: 6px;
       }
-
       .form-file-wrapper {
         border: none;
         position: relative;
@@ -233,30 +225,26 @@
         }
 
         &:after {
-          // position: absolute;
-        	// top: 0;
-        	// left: 0;
-        	// content: "File";
-          // color: white;
-          // width: 120px;
-          // height: 35px;
-          // text-align: center;
-          // text-transform: uppercase;
-          // font-family: $myriad-pro-condensed;
-          // padding-top: 4px;
+           position: absolute;
+           top: 0;
+           left: 0;
+           content: "File";
+           color: white;
+           width: 120px;
+           height: 35px;
+           text-align: center;
+           text-transform: uppercase;
+           font-family: $myriad-pro-condensed;
+           padding-top: 4px;
         }
       }
-
       .description {
         clear: left;
         margin-bottom: 10px;
-
       }
-
       legend {
         clear: left;
       }
-
       .js-form-type-textarea {
         clear: both;
         width: 100%;
@@ -277,7 +265,6 @@
       &::-webkit-input-placeholder {
         text-transform: uppercase;
       }
-
     }
     .simpleselect {
       width: 100%;
@@ -360,14 +347,13 @@
         display: none;
       }
     }
-
-    }
-    .form-actions {
-      clear: left;
-      display: block;
-      float: left;
-      margin-bottom: 20px;
-    }
+  }
+  .form-actions {
+    clear: left;
+    display: block;
+    float: left;
+    margin-bottom: 20px;
+  }
 }
 
 .paragraph.paragraph--type--webform-block.paragraph--view-mode--default {
@@ -383,32 +369,26 @@
       }
     }
   }
-
   .webform-submission-back-star-contest-form .js-form-item textarea {
     border: $cream 2px solid;
   }
-
   .webform-submission-back-star-contest-form .js-form-item input {
     #edit-terms-of-service {
       margin-top: 10px;
     }
   }
-
   .form-type-webform-terms-of-service.js-form-type-webform-terms-of-service.js-form-item.form-item.js-form-type-checkbox.form-item-terms-of-service.js-form-item-terms-of-service {
     float: left;
     clear: none;
     padding: 10px;
   }
-
   input#edit-terms-of-service {
     width: auto;
     display: inline-block;
   }
-
   .form-textarea .required {
     border: 10px;
   }
-
   label.option.js-form-required.form-required {
     padding: 0 0 0 10px;
     display: inline;
@@ -420,11 +400,9 @@
       font-family: "myriad-pro-condensed",Helvetica,sans-serif;
     }
   }
-
   label.option {
     font-size: 16px;
   }
-
   @media only screen and (max-width : $large-screen) {
     .webform-submission-form.webform-submission-add-form.webform-submission-back-star-contest-form.webform-submission-back-star-contest-add-form.js-webform-submit-once.js-webform-details-toggle.webform-details-toggle.js-webform-disable-autosubmit {
       margin: 30px;
