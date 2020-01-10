@@ -1,0 +1,205 @@
+.footer {
+
+  background-color: $purple;
+  margin-top: 10px;
+  @include padding(15px);
+  clear: both;
+  @include media($large-screen-down) {
+    padding: 20px;
+  }
+  .footer-nav-wrap {
+    max-width: 1200px;
+    margin: auto;
+    border-top: 1px solid $pink;
+    border-bottom: 1px solid $pink;
+    padding-top: 20px;
+    @include media($large-screen-down) {
+      height: 200px;
+    }
+    @include media($large-screen-up) {
+      margin: auto;
+      margin-bottom: 30px;
+      padding-top: 30px;
+    }
+    ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      padding-left: 0;
+      @include media($large-screen-down) {
+        @include span-columns(12);
+        float: left;
+        line-height: 30px;
+        margin: 0;
+      }
+      &:first-child{
+        padding-left: 40px;
+        @include media($large-screen-up) {
+          padding-left: 0;
+        }
+      }
+      li {
+        list-style: none;
+        @include media($large-screen-down) {
+          float:left;
+          display: inline;
+        }
+        a {
+          font-family: $myriad-pro-condensed-bold;
+          color: white;
+          font-size: 15px;
+          margin-bottom: 15px;
+          letter-spacing: 1.5px;
+          float: left;
+          text-transform: uppercase;
+          display: block;
+          clear: left;
+
+          @include media($large-screen-down) {
+            float: left;
+            clear: both;
+            width: 130px;
+          }
+        }
+        ul {
+          padding-left: 0px;
+          display: none;
+          @include media($large-screen-up) {
+            display: block;
+          }
+          li a {
+            text-transform: none;
+            color: white;
+            font-family: $myriad-pro-condensed;
+            letter-spacing: 0.5px;
+            font-weight: lighter;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+  .breadcrumbs {
+    max-width: 1200px;
+    margin: auto;
+     ul  {
+       padding-left: 0;
+      li {
+      list-style: none;
+      display: inline-block;
+        a{
+          position: relative;
+          font-family: $myriad-pro-condensed-bold;
+          font-size: 15px;
+          text-transform: uppercase;
+          color: white;
+          list-style: none;
+
+          @include media($large-screen-down) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  .footer-links > div {
+    @include media($large-screen-down) {
+      @include outer-container;
+    }
+    max-width: 1200px;
+
+    @include media($large-screen-up1) {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+    }
+    margin: auto;
+    padding-bottom: 40px;
+    #block-homefooter {
+      img {
+        width: 200px;
+      }
+    }
+    ul {
+      margin-left: 0;
+      padding-left: 0;
+    }
+    .social {
+      margin-top: -10px;
+      width: 100%;
+      @include media($large-screen-down) {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        padding-top: 30px;
+      }
+      a {
+        display: inline;
+        color: white;
+        font-size: 18px;
+        margin-left: 20px;
+        &:first-child {
+          margin-left: 0;
+        }
+      }
+    }
+    li {
+      list-style: none;
+      display: inline-flex;
+      margin: 0 30px 0 0;
+      font-size: 13px;
+
+      a {
+        color: $lightGray;
+        font-family: $myriad-pro;
+        font-weight: lighter;
+        margin: 0;
+        text-decoration: none;
+        letter-spacing: 0.2px;
+        display: inline-flex;
+        line-height: 46px;
+
+        &.logo {
+          background-image: url('../images/logo-white.png');
+          background-size: contain;
+          background-repeat: no-repeat;
+          width: 200px;
+          margin-top: 0;
+          margin-bottom: 0;
+          text-indent: -9999px;
+        }
+      }
+    }
+    nav {
+      display: inline-flex;
+    }
+    .legal {
+      display: block;
+      @include media($large-screen-down) {
+        @include row();
+        border-bottom: 1px solid #6a2b64;
+        li {
+          display: block;
+          float: left;
+          @include span-columns(12);
+        }
+      }
+      ul {
+        margin-top: -5px;
+        display: inline-flex;
+        @include media($large-screen-down) {
+          display: block;
+          padding-left: 0;
+        }
+        a {
+         padding-top: 0;
+         width: 130px;
+         font-size: 13px;
+        }
+      }
+    }
+  }
+}

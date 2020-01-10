@@ -1,0 +1,979 @@
+<?php
+
+/**
+ * @file
+ * Theme processing for sample3.
+ *
+ */
+
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Render\Element;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\views\Views;
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__contact(&$variables) {
+  $node = $variables['node'];
+
+  $variables['site_type'] = NULL;
+  if ($node->hasField('field_site_type') && !$node->field_site_type->isEmpty()) {
+    $sitetype = _sample3_get_entity_translation_current($node->field_site_type->entity);
+    $variables['site_type'] = $sitetype->name->value;
+  }
+  if ($node->hasField('field_more_info')) {
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view_fields().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_views_view_fields__product_category__top_level_terms_nested_2nd_level(&$variables) {
+
+  // Get the country/market switcher control.
+  /** @var \Drupal\vdm_market\Service\MarketService $marketService */
+  $marketService = \Drupal::service('vdm_market.market_service');
+
+  /** @var \Drupal\taxonomy\Entity\Term $term */
+  $term = $variables['row']->_entity;
+  $url = $term->toUrl();
+
+  // Get a render array for a country switcher using the top level term
+  // path. E.g. will go to market versions of bakery products.
+  $variables['country_switcher'] = $marketService->getInPageCountrySwitcher(TRUE, $url);
+}
+
+/**
+ * hook_preprocess() for the our (recipe) categories view to get the image uri
+ * for use with styles in the template.
+ *
+ * @param $variables
+ */
+function sample3_preprocess_views_view_unformatted__our_categories(&$variables) {
+  foreach ($variables['rows'] as &$row) {
+    /** @var \Drupal\taxonomy\Entity\Term $term */
+    $term = $row['content']['#row']->_entity;
+
+    if (!empty($term->field_image[0])) {
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image_item */
+      $image_item = $term->field_image[0];
+      $view = $image_item->view();
+      $row['content']['#image_uri'] = _sample3_get_image_uri($view['#item'], TRUE);
+    }
+  }
+}
+
+/**
+ * hook_preprocess() for the recipes using vdm products view to get the image uri
+ * for use with styles in the template.
+ *
+ * @param $variables
+ */
+function sample3_preprocess_views_view_unformatted__recipes_using_sample3_products(&$variables) {
+  foreach ($variables['rows'] as &$row) {
+    /** @var \Drupal\node\Entity\Node $recipe */
+    $recipe = $row['content']['#node'];
+
+    if (!empty($recipe->field_image[0])) {
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image_item */
+      $image_item = $recipe->field_image[0];
+      $view = $image_item->view();
+      $row['content']['#image_uri'] = _sample3_get_image_uri($view['#item'], TRUE);
+    }
+  }
+}
+
+/**
+ * Image prep for all paragraphs.
+ *
+ * @param $variables
+ */
+function sample3_preprocess_paragraph(&$variables) {
+  if (!empty($variables['content']['field_image'][0])) {
+    $variables['image_url'] = _sample3_get_image_url($variables['content']['field_image'][0]);
+    $variables['image_uri'] = _sample3_get_image_uri($variables['content']['field_image'][0]['#item']);
+  }
+}
+
+/**
+ * Implements hook_preprocess_paragraph__ParagraphType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_paragraph__recipe_ingredient(&$variables) {
+  if (!empty($variables['content']['field_sample3_ingredient'][0]['#node'])) {
+    if (!empty($variables['content']['field_sample3_ingredient'][0]['#node']->field_image->entity)) {
+      $variables['image_url'] = $variables['content']['field_sample3_ingredient'][0]['#node']->field_image->entity->url();
+    }
+    $variables['product_url'] = $variables['content']['field_sample3_ingredient'][0]['#node']->url();
+    $variables['product_title'] = $variables['content']['field_sample3_ingredient'][0]['#node']->label();
+  }
+  $variables['content']['field_sample3_ingredient']['#access'] = FALSE;
+}
+
+/**
+ * Implements hook_preprocess_paragraph__ParagraphType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_paragraph__team_directory(&$variables) {
+  $view_name = 'persona';
+  $display_name = 'meet_the_team';
+  $view = \Drupal\views\Views::getView($view_name);
+  if (!$view) {
+    \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+    return false;
+  }
+  $view->setDisplay($display_name);
+  $variables['persona_team_members'] = $view->preview();
+  $variables['email_body'] =  $_SERVER['REDIRECT_SCRIPT_URI'];
+}
+
+/**
+ * Implements hook_preprocess_paragraph__ParagraphType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_paragraph__hero(&$variables) {
+  $variables['recipe_category_id'] = 0;
+  $variables['recipe_category_id_debug'] = "FAIL";
+  if (isset($_GET['categories'])) {
+    // Set the cache contexts to be dependent on the categories query parameter.
+    $variables['#cache']['contexts'][] = 'url.query_args:categories';
+    $variables['recipe_category_id'] = $_GET['categories'];
+    $variables['recipe_category_id_debug'] = "OK";
+  }
+  $variables['recipe_hero'] = NULL;
+  if ($variables['recipe_category_id']!=0){
+    $entity = entity_load('taxonomy_term', $variables['recipe_category_id']);
+    if ($entity){
+      if ($entity->hasField('field_image') && !$entity->field_image->isEmpty()) {
+        $file = $entity->field_image->entity;
+        $variables['recipe_hero'] = $file->url();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_paragraph__ParagraphType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_paragraph__other_ingredients_group(&$variables) {
+  $variables['content']['field_ingredient_group']['#attributes']['class'][] = 'other-ingredient-group';
+}
+
+/**
+ * @param $variables
+ * @return mixed
+ */
+function _sample3_get_image_url($variables, $default = FALSE) {
+
+  if (isset($variables['#item'])) {
+
+    $item = $variables['#item'];
+    $uri = _sample3_get_image_uri($item);
+
+    if (!$default && $variables['#theme'] == 'image_formatter' && $variables['#image_style']) {
+      $style = ImageStyle::load($variables['#image_style']);
+      $dimensions = array('width' => $item->width, 'height' => $item->height);
+      $style->transformDimensions($dimensions, $uri);
+      $uri = $style->buildUrl($uri);
+    }
+
+    $url = file_url_transform_relative(file_create_url($uri));
+
+    return $url;
+  }
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__article(&$variables) {
+  $node = $variables['node'];
+
+  if (!empty($variables['teaser'])) {
+    $view_name = 'article_tags';
+    $display_name = 'block_2';
+    $view = \Drupal\views\Views::getView($view_name);
+    if (!$view) {
+      \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+      return false;
+    }
+    $view->setDisplay($display_name);
+    $variables['article_tags'] = $view->preview();
+  }
+  $variables['email_body'] =  $_SERVER['REDIRECT_SCRIPT_URI'];
+  $lang = Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  $variables['download_reciepe']['path'] =  '/'. $lang.'/node/generate/pdf/' . $node->id() . '/full';
+  $author_email = '';
+  $author_mail = $node->get('field_author_email')->getValue();
+  if(!empty($author_mail)){
+      $author_email = $author_mail[0]['value'];
+  }
+  $variables['author_email'] = $author_email;
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__brand(&$variables) {
+  $node = $variables['node'];
+
+  $view_name = 'products';
+  $display_name = 'brand';
+  $view = \Drupal\views\Views::getView($view_name);
+  if (!$view) {
+    \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+    return false;
+  }
+  $view->setDisplay($display_name);
+  $variables['brand_products'] = $view->preview();
+
+  $body_title = $node->get('field_body_title')->getValue();
+  if(empty($body_title)){
+      $original = _sample3_get_entity_translation($node, $node->toArray()['content_translation_source'][0]['value']);
+      $body_title = $original->get('field_body_title')->getValue()[0]['value'];
+  }else{
+      $body_title = $body_title[0]['value'];
+  }
+  $variables['body_title'] = $body_title;
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__product(&$variables) {
+  $node = $variables['node'];
+
+  // Get the current language.
+  $lang = Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+
+  $variables['product_brand_logo'] = NULL;
+  if ($node->hasField('field_product_brand') && !$node->field_product_brand->isEmpty()) {
+    $brand = _sample3_get_entity_translation_current($node->field_product_brand->entity);
+    if (isset($brand) && $brand->hasField('field_logo') && !$brand->field_logo->isEmpty()) {
+      $file = $brand->field_logo->entity;
+      if (!empty($file)) {
+        $variables['product_brand_logo'] = $file->url();
+      }
+    }
+  }
+
+  $variables['product_hero'] = NULL;
+  $variables['product_hero_debug'] = "FAIL";
+  if ($node->hasField('field_product_type') && !$node->field_product_type->isEmpty()) {
+    $brand = _sample3_get_entity_translation_current($node->field_product_type->entity);
+    if ($brand->hasField('field_image') && !$brand->field_image->isEmpty()) {
+      $file = $brand->field_image->entity;
+      if (!empty($file)) {
+        $variables['product_hero'] = $file->url();
+        $variables['product_hero_debug'] = "OK";
+      }
+    }
+  }
+
+  $variables['items_per_box'] = NULL;
+  if ($node->hasField('field_items_per_box') && !$node->field_items_per_box->isEmpty()) {
+    $variables['items_per_box'] = $node->field_items_per_box->value;
+  }
+
+  $variables['fkb_code'] = NULL;
+  if ($node->hasField('field_fkb_code')) {
+    if (!$node->field_fkb_code->isEmpty()) {
+      $variables['fkb_code'] = $node->field_fkb_code->value;
+    } else {
+      // The field will always show so we need a placeholder if empty.
+      $variables['fkb_code'] = t('n/a');
+    }
+  }
+
+  $variables['tags'] = [];
+  if ($node->hasField('field_tastes') && !$node->field_tastes->isEmpty()) {
+    foreach ($node->field_tastes as $item) {
+      $term = _sample3_get_entity_translation($item->entity, $lang);
+      $variables['tags'][] = $term->label();
+    }
+  }
+  $variables['productcode_bsf'] = NULL;
+  if ($node->hasField('field_article_id') && !$node->field_article_id->isEmpty()) {
+    $variables['productcode_bsf'] = base64_encode($node->field_article_id->value);
+  }
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__recipe(&$variables) {
+  $node = $variables['node'];
+
+  // Get the current language.
+  $lang = Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+
+  $variables['recipe_hero'] = NULL;
+  if ($node->hasField('field_recipe_categories') && !$node->field_recipe_categories->isEmpty()) {
+    $brand = _sample3_get_entity_translation_current($node->field_recipe_categories->entity);
+    if ($brand->hasField('field_image') && !$brand->field_image->isEmpty()) {
+      $file = $brand->field_image->entity;
+      $variables['recipe_hero'] = $file->url();
+    }
+  }
+
+  $variables['serving_number'] = 0;
+  if ($node->hasField('field_serving_number') && !$node->field_serving_number->isEmpty()) {
+    $variables['serving_number'] = $node->field_serving_number->value;
+  }
+
+  $variables['dietaryinfo'] = [];
+  if ($node->bundle() != 'product' && $node->hasField('field_dietary_information') && !$node->field_dietary_information->isEmpty()) {
+    foreach ($node->field_dietary_information as $item) {
+      $term = _sample3_get_entity_translation($item->entity, $lang);
+      $variables['dietaryinfo'][] = $term->name->value;
+    }
+  }
+
+  foreach (['field_possible_occasions', 'field_themes', 'field_tastes'] as $tag_field_name) {
+    if (!empty($variables['content'][$tag_field_name] && is_array($variables['content'][$tag_field_name]))) {
+      $element_keys = \Drupal\Core\Render\Element::children($variables['content'][$tag_field_name]);
+      $tag_items = array_intersect_key($variables['content'][$tag_field_name], array_flip($element_keys));
+      $variables['tags'] = array_merge($variables['tags'], $tag_items);
+    }
+  }
+
+  $variables['chef'] = '';
+  if ($node->hasField('field_chef') && !$node->field_chef->isEmpty()) {
+    $chef = _sample3_get_entity_translation($node->field_chef->entity, $lang);
+    $variables['chef'] = $chef->label();
+  }
+
+  $variables['chef_signature'] = '';
+  if ($node->hasField('field_chef') && !$node->field_chef->isEmpty()) {
+    $chef = _sample3_get_entity_translation_current($node->field_chef->entity);
+    if ($chef->hasField('field_signature_image') && !$chef->field_signature_image->isEmpty()) {
+      $file = $chef->field_signature_image->entity;
+      $variables['chef_signature'] = $file->url();
+    }
+  }
+
+  $variables['chef_description'] = '';
+  if ($node->hasField('field_chef_description') && !$node->field_chef_description->isEmpty()) {
+    $variables['chef_description'] = $node->field_chef_description->value;
+  }
+
+  $variables['how_to_make'] = [];
+  foreach ($node->field_how_to_make as $item) {
+    $variables['how_to_make'][] = $item->value;
+  }
+
+  $variables['notes'] = '';
+  if ($node->hasField('field_notes') && !$node->field_notes->isEmpty()) {
+    $variables['notes'] = $node->field_notes->value;
+  }
+  $variables['email_body'] =  $_SERVER['REDIRECT_SCRIPT_URI'];
+  $variables['download_reciepe']['path'] = '/'. $lang.'/node/generate/pdf/' . $node->id() . '/full';
+  $variables['download_reciepe']['image'] = drupal_get_path('module', 'vdm_entity_pdf') . '/image/download-icon.png';
+
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__inspiration(&$variables) {
+  $node = $variables['node'];
+
+  $variables['featured_item_strap_line'] = null;
+  $variables['featured_item_title'] = null;
+  $variables['featured_item_summary'] = null;
+  $variables['featured_item_image'] = null;
+  if ($node->hasField('field_featured_item') && !$node->field_featured_item->isEmpty()) {
+    foreach ($node->field_featured_item as $item) {
+      $item = _sample3_get_entity_translation_current($item->entity);
+      $variables['featured_item_strap_line'] = ($item->hasField('field_strap_line')) ? $item->field_strap_line->value : '';
+      $variables['featured_item_title'] = $item->label();
+      $variables['featured_item_summary'] = $item->body->summary;
+      if (!$variables['featured_item_summary']) {
+        $variables['featured_item_summary'] = text_summary($item->body->value, NULL, 200);
+      }
+      $variables['featured_item_image'] = $item->field_image->entity->url();
+      break;
+    }
+  }
+}
+
+/**
+ * Implements hook__preprocess_node__NodeType().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node__tastylicious(&$variables) {
+  $node = $variables['node'];
+  $variables['recipe_data'] = '';
+  if ($node->hasField('field_recipe') && !$node->field_recipe->isEmpty()) {
+    if (!empty($node->field_recipe->getValue()[0]['target_id'])) {
+      $view = Views::getView('tastylicious');
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => 'tastylicious'));
+      }
+      elseif (is_object($view)) {
+        $view->setArguments((array) $node->field_recipe->getValue()[0]['target_id']);
+        $view->setDisplay('recipe_content');
+        $view->preExecute();
+        $view->execute();
+        $recipe_data = $view->buildRenderable('recipe_content', (array) $node->field_recipe->getValue()[0]['target_id']);
+        $variables['recipe_data'] = $recipe_data;
+      }
+    }
+  }
+
+  $variables['how_to_make'] = [];
+  foreach ($node->field_how_to_make as $item) {
+    $variables['how_to_make'][] = $item->value;
+  }
+}
+
+/**
+ * Implements hook__preprocess_node().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_node(&$variables) {
+  $node = $variables['node'];
+
+  $lang = Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  $variables['dietaryinfo'] = [];
+  if ($node->bundle() != 'product' && $node->hasField('field_dietary_information') && !$node->field_dietary_information->isEmpty()) {
+    foreach ($node->field_dietary_information as $item) {
+      $term = _sample3_get_entity_translation($item->entity, $lang);
+      $variables['dietaryinfo'][] = $term->name->value;
+    }
+  }
+
+  // Get styled image uri for use in background attribute.
+  if (!empty($variables['content']['field_image'][0])) {
+    $variables['image_url'] = _sample3_get_image_url($variables['content']['field_image'][0]);
+  }
+
+  if ($node->bundle() == 'article' && $variables['view_mode'] == 'teaser') {
+    // Fit variables to CTA.
+    $test = null;
+  }
+}
+
+/**
+ * Implements hook__preprocess_page().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_page(&$variables) {
+
+  if (\Drupal::service('path.matcher')->isFrontPage()) {
+
+    if (!isset($variables['node']) || $variables['node']->type != 'frontpage') {
+      return;
+    }
+
+    $node = $variables['node'];
+
+    if (!$node->field_our_brands->isEmpty()) {
+      $ourbrands = $node->field_our_brands->value;
+    } else {
+      $ourbrands = null;
+    }
+
+    $variables['our_brands'] = $ourbrands;
+  }
+}
+
+/**
+ * Implements hook__preprocess_taxonomy_term().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_taxonomy_term(&$variables) {
+
+  /** @var Drupal\taxonomy\Entity\Term $term */
+  $term = $variables['term'];
+
+  // Set arrays and counts of parents and children of this term.
+  $variables['term_parents'] = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadParents($term->id());
+  $variables['term_parent_count'] = count($variables['term_parents']);
+  $variables['term_children'] = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadChildren($term->id());
+  $variables['term_children_count'] = count($variables['term_children']);
+
+  // Add template variables dependant on vocabulary
+  $vocab = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load($term->getVocabularyId());
+  switch ($vocab->id()) {
+
+    case 'recipe_categories':
+
+      // Add view of recipes for this category.
+      $view_name = 'recipe';
+      $display_name = 'recipes_for_recipe_category';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $variables['recipes'] = $view->preview();
+
+      break;
+
+    case 'product_category':
+
+      // Add view of subcategories for the current category and market.
+      $view_name = 'product_category';
+      $display_name = 'children';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $variables['subcategories'] = $view->preview();
+
+      // Add view of brands for the current market.
+      $view_name = 'brands';
+      $display_name = 'brands_for_market';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $variables['brands'] = $view->preview();
+
+      // Add view of products in this category for the current market.
+      $view_name = 'products';
+      $display_name = 'category';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $variables['products'] = $view->preview();
+
+      break;
+
+    case 'tags':
+
+      $view_name = 'article_tags';
+      $display_name = 'block_1';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $variables['article_tags'] = $view->preview();
+
+      $view_name = 'top_article';
+      $display_name = 'block_2';
+      $view = \Drupal\views\Views::getView($view_name);
+      if (!$view) {
+        \Drupal::logger('module_name')->error('View @view not found', array('@view' => $view_name));
+        return false;
+      }
+      $view->setDisplay($display_name);
+      $htmlpath = render($view->preview());
+      $variables['top_article_hero'] = trim(strip_tags($htmlpath));
+  }
+}
+
+/**
+ * Preprocessor function for the links--language-block template.
+ *
+ * Converts the list of links into a <select> render array.
+ *
+ * @param $variables
+ */
+function sample3_preprocess_links__language_block(&$variables) {
+
+  $curr_lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $def_lang  = \Drupal::languageManager()->getDefaultLanguage()->getId();
+
+  $variables['language_selector'] = [
+    '#theme' => 'select',
+    '#title' => 'Language',
+    '#attributes' => [
+      'onchange' => "javascript:lang = this.options[this.selectedIndex].value; location.href = '/' + (lang == '" . $def_lang . "' ? '' : lang);",
+    ],
+    '#options' => [],
+    '#value' => $curr_lang,
+  ];
+
+  foreach ($variables['links'] as $lang => $link) {
+    $variables['language_selector']['#options'][$lang] = $link['text'];
+  }
+
+  unset($variables['links']);
+}
+
+/**
+ * Helper function to get entity translation for users current language.
+ *
+ * @param $entity
+ *   The entity.
+ * @return entity
+ *   Translated entity or original entity if no translation found.
+ */
+function _sample3_get_entity_translation_current($entity) {
+  $lang = Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+  return _sample3_get_entity_translation($entity, $lang);
+}
+
+/**
+ * Helper function to return requested language version of entity.
+ *
+ * @param $entity
+ *   The entity
+ * @param $lang
+ *   Id of language required
+ * @return entity
+ *   The translated version of the entity or the original version if requested translation does not exist.
+ */
+function _sample3_get_entity_translation($entity, $lang) {
+  if (isset($entity) && $entity->language()->getId() != $lang  && $entity->hasTranslation($lang)) {
+    return $entity->getTranslation($lang);
+  }
+  return $entity;
+}
+
+/**
+ * Implements hook__preprocess_block().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_block(&$variables) {
+  if ($variables['plugin_id'] == 'vdm_market_system_menu_block:main' || $variables['plugin_id'] == 'system_menu_block:main') {
+    $variables['attributes']['class'][] = 'nav-wrap';
+    $variables['attributes']['class'][] = 'sliding-panel-content';
+  }
+}
+
+/**
+ * Implements hook__preprocess_field().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_field(&$variables) {
+  if ($variables['entity_type'] == 'node') {
+    $bundle = $variables['element']['#bundle'];
+    // Start to normalize field classes.
+    if ($variables['field_name'] == 'body' && in_array($bundle, ['article', 'local_page'])) {
+      $variables['attributes']['class'][] = 'body-text';
+    }
+    // Hide labels on all product fields.
+    if ($bundle == 'product' && $variables['element']['#view_mode'] == 'full') {
+      $variables['label_display'] = 'hidden';
+      $variables['label_hidden'] = true;
+    }
+
+    // Hide labels on all product fields.
+    if ($bundle == 'contact' && $variables['element']['#view_mode'] == 'teaser') {
+      if ($variables['field_name'] == 'field_more_info') {
+        $variables['attributes']['class'][] = 'cusrom-user-more';
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ *
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ */
+function sample3_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  if ($hook == 'field') {
+    if ($variables['element']['#entity_type'] == 'node') {
+      if ($variables['element']['#bundle'] == 'local_page') {
+        // Use a common paragraph field template on local pages.
+        if ($variables['element']['#field_type'] == 'entity_reference_revisions') {
+          if ($first_child = _sample3_get_first_child($variables['element'])) {
+            if (isset($first_child['#paragraph'])) {
+              // Now make a suggestion to use the flat paragraph field template.
+              $suggestions[] = 'field__paragraph_flattened';
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implement hook_theme_suggestions_HOOK_alter() for nodes.
+ *
+ * @param array $suggestions
+ * @param array $variables
+ */
+function sample3_theme_suggestions_node_alter(array &$suggestions, array $variables) {
+  if ($variables['elements']['#node']->bundle() == 'article' && $variables['elements']['#view_mode'] == 'teaser') {
+    // Use the generic CTA template
+    $suggestions = ['cta_small_image'];
+  }
+}
+
+/**
+ * Implements hook__preprocess_field().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_cta_small_image(&$variables) {
+  if ($variables['theme_hook_original'] == 'node') {
+    /** @var \Drupal\node\Entity\Node $node */
+    $node = $variables['elements']['#node'];
+
+    if ($node->bundle() == 'article' && $variables['elements']['#view_mode'] == 'teaser') {
+      // And map variables
+      $variables['elements']['field_image'][0]['#image_style'] = 'vdm_scale_500_height';
+      $variables['image_url'] = _sample3_get_image_url($variables['elements']['field_image'][0]);
+      $variables['title'] = $variables['elements']['title'];
+      $variables['url'] = $node->url('canonical', array(
+        'language' => $node->language(),
+      ));
+      $variables['background_color'] = 'dark';
+      $variables['background_opacity'] = '';
+    }
+  }
+}
+
+/**
+ * Implement hook_theme_suggestions_HOOK_alter() for nodes.
+ *
+ * @param array $suggestions
+ * @param array $variables
+ */
+function sample3_theme_suggestions_paragraph_alter(array &$suggestions, array $variables) {
+  /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+  $paragraph = $variables['elements']['#paragraph'];
+  if ($paragraph->bundle() == 'hero_basic') {
+    // Use the generic CTA template
+    $suggestions = ['hero'];
+  }
+}
+
+/**
+ * Implements hook__preprocess_field().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_hero(&$variables) {
+  if ($variables['theme_hook_original'] == 'paragraph') {
+    /** @var \Drupal\paragraphs\Entity\Paragraph $node */
+    $paragraph = $variables['elements']['#paragraph'];
+
+    if ($paragraph->bundle() == 'hero_basic') {
+      // And map variables
+      $variables['image_url'] = _sample3_get_image_url($variables['elements']['field_image'][0]);
+      $variables['title'] = $variables['elements']['field_title'];
+      $variables['subtitle'] = $variables['elements']['field_subtitle'];
+
+      if (!empty($paragraph->field_background_color[0]->entity)) {
+        $variables['background_color'] = $paragraph->field_background_color[0]->entity->label();
+      }
+
+      if (!empty($paragraph->field_opacity[0]->entity)) {
+        $variables['background_opacity'] = $paragraph->field_opacity[0]->entity->label();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook__preprocess().
+ *
+ * @param $variables
+ *
+ * @param $hook
+ */
+function sample3_preprocess(&$variables, $hook) {
+  if ($hook == 'paragraph') {
+    if (!empty($variables['paragraph'])) {
+      /** @var \Drupal\paragraphs\Entity\Paragraph $paragraph */
+      $paragraph = $variables['paragraph'];
+      if ($paragraph->bundle() == 'embedded_view') {
+        // Add CSS classes to views container.
+        $css_class = $paragraph->field_css_class->value;
+        $variables['content']['field_view'][0]['#attributes']['class'][] = $css_class;
+        unset($variables['content']['field_css_class']);
+      }
+      // Get view row counts for use in templates.
+      if (!empty($variables['content']['field_featured_view'])) {
+        $variables['field_featured_view_row_count'] = _sample3_get_viewsreference_field_view_row_count($variables['content']['field_featured_view']);
+      }
+      elseif (!empty($variables['content']['field_view'])) {
+        $variables['field_view_row_count'] = _sample3_get_viewsreference_field_view_row_count($variables['content']['field_view']);
+      }
+      elseif (!empty($variables['content']['field_view_category_roots'])) {
+        $variables['field_view_category_roots_row_count'] = _sample3_get_viewsreference_field_view_row_count($variables['content']['field_view_category_roots']);
+      }
+    }
+  }
+}
+
+/**
+ * Get the row count for a views reference field.
+ *
+ * @param $field
+ * @return int
+ */
+function _sample3_get_viewsreference_field_view_row_count($field) {
+  /** @var \Drupal\views\ViewExecutable $view */
+   $count =1;
+    if(!empty( $field[0]['#view'])){
+    $view = $field[0]['#view'];
+    $count=count($view->result);
+    }
+    return $count;
+}
+
+/**
+ * Helper function to get the first child of a render element.
+ *
+ * @param $element
+ * @return mixed
+ *   Return element or FALSE if no children.
+ */
+function _sample3_get_first_child($element) {
+  $item_keys = Element::children($element);
+  if (!empty($item_keys)) {
+    return $element[$item_keys[0]];
+  }
+}
+
+/**
+ * Implements hook__preprocess().
+ *
+ * @return $variables
+ */
+function sample3_theme() {
+  return [
+    'hero' => [
+      'template' => 'hero',
+      'render element' => 'children',
+      'path' => drupal_get_path('theme', 'sample3') . '/templates/modules',
+    ],
+  ];
+}
+
+/**
+ * Implements hook__preprocess_html().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_html(&$variables) {
+   if ($node = \Drupal::request()->attributes->get('node')) {
+     $variables['attributes']['class'][] = 'page-node-' . $node->id();
+   }
+   else {
+    $variables['attributes']['class'][] = 'test_class';
+   }
+ }
+
+/**
+ * Implements hook__preprocess_menu().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_menu(&$variables) {
+  if($variables['menu_name'] == 'footer-sitemap-menu') {
+    $items = $variables['items'];
+    $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    foreach ($items as $key => $item) {
+      $plugin_id = $item['original_link']->getPluginId();
+      list($entity_type, $uuid) = explode(':', $plugin_id, 2);
+      if ($entity_type == 'menu_link_content') {
+        try {
+          $entity = \Drupal::entityManager()
+            ->loadEntityByUuid($entity_type, $uuid);
+          $translation = \Drupal::entityManager()->getTranslationFromContext($entity);
+          $t_langu_id = $translation->language()->getId();
+        }
+        catch (PluginNotfoundException $e) {
+          // Make sure we catch failed entity loadings.
+        }
+        if($t_langu_id != $language){
+          unset($variables['items'][$key]);
+        }
+      }
+      if(!empty($item['below'])){
+        foreach ($item['below'] as $key2 => $item2) {
+          $plugin_id = $item2['original_link']->getPluginId();
+          list($entity_type, $uuid) = explode(':', $plugin_id, 2);
+          if ($entity_type == 'menu_link_content') {
+            try {
+              $entity = \Drupal::entityManager()
+                ->loadEntityByUuid($entity_type, $uuid);
+              $translation = \Drupal::entityManager()->getTranslationFromContext($entity);
+              $t_langu_id = $translation->language()->getId();
+            }
+            catch (PluginNotfoundException $e) {
+              // Make sure we catch failed entity loadings.
+            }
+            if($t_langu_id != $language){
+              unset($variables['items'][$key]['below'][$key2]);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view_fields().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_views_view_fields__product_category__second_level_terms(&$variables) {
+  _image_url_translater($variables);
+}
+
+/**
+ * Implements hook_preprocess_views_view_fields().
+ *
+ * @param $variables
+ */
+function sample3_preprocess_views_view_fields__product_category__children(&$variables) {
+  _image_url_translater($variables);
+}
+
+function _image_url_translater(&$variables) {
+    // Generate translated image url-s in product category view
+    $img_uri = $variables["fields"]["field_image"];
+    $img_uri = urldecode($img_uri->content->__toString());
+    $url_start = strpos( $img_uri, '/sites/default/files/' ) + 21;
+    $img_uri = 'public://' . substr($img_uri, $url_start ,-11);
+    $variables['translated_url'] = $img_uri;
+}
+
+function _sample3_get_image_uri($item) {
+    if (($entity = $item->entity) && empty($item->uri)) {
+        $uri = $entity->getFileUri();
+    }
+    else {
+        $uri = $item->uri;
+    }
+    return $uri;
+}

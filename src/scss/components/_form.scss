@@ -1,0 +1,436 @@
+.form-required:after {
+  content: '';
+  vertical-align: super;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 6px 6px;
+  width: 6px;
+  height: 6px;
+  margin: 0 0.3em;
+}
+
+#contact-us-form-wrapper {
+  .js-form-item {
+    display: block;
+    width: 40%;
+    margin-bottom: 10px;
+    margin-right: 5%;
+    float: left;
+    height: 100px;
+    @include media($large-screen-down) {
+      width: 100%;
+      margin-right: 0;
+      height: auto;
+      min-height: 100px;
+    }
+      label {
+        display: block;
+        float: left;
+        clear: both;
+        text-transform: uppercase;
+        font-family: $myriad-pro-condensed;
+        font-size: 18px;
+        letter-spacing: 2px;
+        color: #6d6d6d;
+      }
+      input {
+        margin-top: 2.5px;
+        display: block;
+        clear: left;
+        border: none;
+        border-bottom: $cream 2px solid;
+        background-color: transparent;
+        float: left;
+        outline: 0;
+        font-family: $myriad-pro-condensed;
+        font-size: 16px;
+        letter-spacing: 1.5px;
+        &::-webkit-input-placeholder {
+          text-transform: uppercase;
+        }
+        @include media($large-screen-down) {
+          width: 100%;
+        }
+      }
+
+    }
+    .field--widget-string-textarea {
+      clear: left;
+      float: left;
+
+      .js-form-item {
+        width: 100%;
+        border:none;
+        textarea {
+          width: 100%;
+          border:none;
+          height: 60px;
+          resize: none;
+          outline: 0;
+          font-family: $myriad-pro-condensed;
+          font-size: 16px;
+          letter-spacing: 1.5px;
+          &::-webkit-input-placeholder {
+            text-transform: uppercase;
+          }
+        }
+      }
+    }
+    .simpleselect {
+      width: 100%;
+      display: block;
+      clear: left;
+      float: left;
+      margin-bottom: 40px;
+      label {
+        display: block;
+      }
+      .placeholder {
+        width: 100%;
+        padding-left: 0;
+        border:none;
+        border-bottom: $cream 2px solid;
+        margin-top: -5px;
+        padding-bottom: 1px;
+        text-transform: uppercase;
+        font-family: $myriad-pro-condensed;
+        font-size: 16px;
+        letter-spacing: 1.5px;
+        color: black;
+        &:hover {
+          background-color: white;
+        }
+        &:after {
+          background: url(../images/contact-form-dropdown.svg);
+          background-repeat: no-repeat;
+          background-size: 20px;
+          width: 20px;
+          background-position:center center;
+          right: 5px;
+        }
+      }
+      .options {
+        width: 100%;
+        border-color: $cream;
+        .option {
+          text-transform: uppercase;
+          font-family: $myriad-pro-condensed;
+          font-size: 16px;
+          letter-spacing: 1.5px;
+        }
+        .active {
+          background-color: $cream;
+        }
+      }
+
+    }
+    @charset "UTF-8";
+}
+
+.webform-submission-back-star-contest-form  {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .js-form-item {
+    display: block;
+    width: 60%;
+    margin-bottom: 10px;
+    margin-right: 5%;
+    //float: left;
+    // height: 100px;
+    @include media($large-screen-down) {
+      width: 100%;
+      margin-right: 0;
+    }
+      .fieldset-legend {
+        font-family: $myriad-pro-condensed-bold;
+        font-size: 18px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      label {
+        display: block;
+        float: left;
+        clear: both;
+        text-transform: uppercase;
+        font-family: $myriad-pro-condensed;
+        font-size: 18px;
+        letter-spacing: 2px;
+        color: #6d6d6d;
+      }
+      input {
+        margin-top: 2.5px;
+        display: block;
+        clear: left;
+        border: none;
+        border-bottom: $cream 2px solid;
+        background-color: transparent;
+        float: left;
+        outline: 0;
+        font-family: $myriad-pro-condensed;
+        font-size: 16px;
+        letter-spacing: 1.5px;
+        width: 100%;
+        &::-webkit-input-placeholder {
+          text-transform: uppercase;
+        }
+        @include media($large-screen-down) {
+          width: 100%;
+        }
+
+
+      }
+
+      .required:after {
+          content: '';
+          vertical-align: super;
+          display: inline-block;
+          /* Use a background image to prevent screen readers from announcing the text. */
+          background-image: url(../../../../../../misc/icons/ee0000/required.svg);
+          background-repeat: no-repeat;
+          background-size: 6px 6px;
+          width: 6px;
+          height: 6px;
+          margin: 0 0.3em;
+      }
+
+      .js-form-type-checkbox input {
+        margin-top: 6px;
+      }
+
+      .form-file-wrapper {
+        border: none;
+        position: relative;
+        overflow: hidden;
+        width: 150px;
+        height: 35px;
+        background: $orange;
+        clear: left;
+        content: "yay";
+        color: white;
+        cursor: pointer;
+        label {
+          color: white;
+          width: 150px;
+          height: 35px;
+          text-align: center;
+          font-family: $myriad-pro-condensed-bold;
+          font-size: 23px;
+        }
+        input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            content: "yay";
+            cursor: pointer;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer;
+        }
+
+        &:after {
+          // position: absolute;
+        	// top: 0;
+        	// left: 0;
+        	// content: "File";
+          // color: white;
+          // width: 120px;
+          // height: 35px;
+          // text-align: center;
+          // text-transform: uppercase;
+          // font-family: $myriad-pro-condensed;
+          // padding-top: 4px;
+        }
+      }
+
+      .description {
+        clear: left;
+        margin-bottom: 10px;
+
+      }
+
+      legend {
+        clear: left;
+      }
+
+      .js-form-type-textarea {
+        clear: both;
+        width: 100%;
+        margin-bottom: 30px;
+      }
+    textarea {
+      border:none;
+      clear: left;
+      float: left;
+      height: 60px;
+      border-bottom: $cream 2px solid;
+      resize: none;
+      width: 100%;
+      outline: 0;
+      font-family: $myriad-pro-condensed;
+      font-size: 16px;
+      letter-spacing: 1.5px;
+      &::-webkit-input-placeholder {
+        text-transform: uppercase;
+      }
+
+    }
+    .simpleselect {
+      width: 100%;
+      display: block;
+      clear: left;
+      float: left;
+      margin-bottom: 40px;
+      label {
+        display: block;
+      }
+      .placeholder {
+        width: 100%;
+        padding-left: 0;
+        border:none;
+        border-bottom: $cream 2px solid;
+        margin-top: -5px;
+        padding-bottom: 1px;
+        text-transform: uppercase;
+        font-family: $myriad-pro-condensed;
+        font-size: 16px;
+        letter-spacing: 1.5px;
+        color: black;
+        &:hover {
+          background-color: white;
+        }
+        &:after {
+          background: url(../images/contact-form-dropdown.svg);
+          background-repeat: no-repeat;
+          background-size: 20px;
+          width: 20px;
+          background-position:center center;
+          right: 5px;
+        }
+      }
+      .options {
+        width: 100%;
+        border-color: $cream;
+        .option {
+          text-transform: uppercase;
+          font-family: $myriad-pro-condensed;
+          font-size: 16px;
+          letter-spacing: 1.5px;
+        }
+        .active {
+          background-color: $cream;
+        }
+      }
+
+    }
+    .js-form-item {
+      width: 100%;
+
+      label, input {
+        clear: none;
+        float: left;
+        display: inline-block;
+      }
+      input {
+        width: 5%;
+      }
+      label {
+        width: 95%;
+      }
+    }
+    .button {
+      background-color: $orange;
+      border: none;
+      color: white;
+      float: left;
+      margin-right: 5%;
+      @include padding(5px);
+      padding-top: 5px;
+      width: 150px;
+      text-align: center;
+      text-transform: uppercase;
+      font-family: $myriad-pro-condensed-bold;
+      font-size: 23px;
+
+      &.js-hide {
+        display: none;
+      }
+    }
+
+    }
+    .form-actions {
+      clear: left;
+      display: block;
+      float: left;
+      margin-bottom: 20px;
+    }
+}
+
+.paragraph.paragraph--type--webform-block.paragraph--view-mode--default {
+  div.webform-progress {
+    ul {
+      li.progress-step {
+        &.is-active,
+        &.is-complete {
+          span.progress-marker {
+            background: $purple;
+          }
+        }
+      }
+    }
+  }
+
+  .webform-submission-back-star-contest-form .js-form-item textarea {
+    border: $cream 2px solid;
+  }
+
+  .webform-submission-back-star-contest-form .js-form-item input {
+    #edit-terms-of-service {
+      margin-top: 10px;
+    }
+  }
+
+  .form-type-webform-terms-of-service.js-form-type-webform-terms-of-service.js-form-item.form-item.js-form-type-checkbox.form-item-terms-of-service.js-form-item-terms-of-service {
+    float: left;
+    clear: none;
+    padding: 10px;
+  }
+
+  input#edit-terms-of-service {
+    width: auto;
+    display: inline-block;
+  }
+
+  .form-textarea .required {
+    border: 10px;
+  }
+
+  label.option.js-form-required.form-required {
+    padding: 0 0 0 10px;
+    display: inline;
+    float: none;
+    clear: none;
+    a {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: "myriad-pro-condensed",Helvetica,sans-serif;
+    }
+  }
+
+  label.option {
+    font-size: 16px;
+  }
+
+  @media only screen and (max-width : $large-screen) {
+    .webform-submission-form.webform-submission-add-form.webform-submission-back-star-contest-form.webform-submission-back-star-contest-add-form.js-webform-submit-once.js-webform-details-toggle.webform-details-toggle.js-webform-disable-autosubmit {
+      margin: 30px;
+      .placeholder {
+        width: initial;
+      }
+    }
+  }
+}

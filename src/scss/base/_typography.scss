@@ -1,0 +1,567 @@
+@include font-face("myriad-bold", "../fonts/myriad-bold/MyriadPro-Bold", bold, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro", "../fonts/myriad-bold-italic/MyriadPro-BoldIt", bold italic, $file-formats: eot eot woff ttf);
+@include font-face("MyriadPro-BoldCond", "../fonts/myriad-boldcondensed/MyriadPro-BoldCond", bold, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro-condensed", "../fonts/myriad-pro-condensed/MyriadPro-Cond", normal bold, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro", "../fonts/myriad-bold/MyriadPro-Bold", bold, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro", "../fonts/myriad-light/MyriadPro-Light", light, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro", "../fonts/myriad-regular/MyriadPro-Regular", normal, $file-formats: eot eot woff ttf);
+@include font-face("myriad-pro-regular-italic", "../fonts/myriad-regular-italic/MyriadPro-It", normal, italic, $file-formats: eot eot woff ttf);
+
+$myriad-pro: "myriad-pro", Helvetica, sans-serif;
+$myriad-pro-bold: "myriad-bold", bold, Helvetica, sans-serif;
+$myriad-pro-condensed: "myriad-pro-condensed", Helvetica, sans-serif;
+$myriad-pro-condensed-bold: "MyriadPro-BoldCond", "myriad-pro-condensed", Helvetica, sans-serif;
+$myriad-pro-italic: "myriad-pro-regular-italic", Helvetica, sans-serif;
+
+$base-font-family: $myriad-pro;
+$base-font-color: black;
+
+$base-line-height: 18px;
+$heading-line-height: 20px;
+
+
+body {
+  color: $base-font-color;
+  font-family: $base-font-family;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: modular-scale(1);
+}
+
+h1 {
+  font-size: 60px;
+}
+.heading {
+  font-size: em(30);
+  line-height: 26px;
+  text-transform: uppercase;
+  font-weight: normal;
+  display: block;
+  letter-spacing: 1.9px;
+  @include margin(5px 0 5px 0);
+  font-family: $myriad-pro-condensed-bold;
+  font-weight: bold;
+
+  &--dark-background{
+    color: white;
+  }
+
+  &--hero {
+    font-size: 62px;
+    line-height: 70px;
+  }
+
+  &--large {
+    line-height: 38px;
+    font-size: 38px;
+    letter-spacing: 4px;
+    @include media($large-screen-down) {
+      line-height: 24px;
+      font-size: 24px;
+    }
+  }
+
+  &--medium {
+    line-height: 29px;
+    font-size: em(29px);
+  }
+
+  &--medium-small {
+    line-height: 24px;
+    font-size: em(24px);
+  }
+
+  &--small {
+    line-height: 18px;
+    font-size: em(18px);
+  }
+  &--mini {
+    font-size: 13px;
+    font-family: $myriad-pro-condensed;
+  }
+
+  &--underlined, &--underlined div  {
+    line-height: 29px;
+    font-size: 22px;
+    display: inline-block;
+    height: 30px;
+    &:after {
+      content: "";
+      border-top: 2px solid black;
+      width: 60px;
+      height: 20px;
+      @include margin(-4px auto 30px auto);
+      display: block;
+    }
+  }
+
+  &--underlined-white {
+    line-height: 29px;
+    font-size: 15px;
+    display: inline-block;
+    height: 30px;
+    &:after {
+      content: "";
+      border-top: 1.5px solid white;
+      width: 60px;
+      height: 20px;
+      @include margin(-4px auto 30px auto);
+      display: block;
+    }
+  }
+
+  &--normal-weight {
+    font-family: $myriad-pro-condensed;
+    font-weight: 200;
+  }
+
+  &--highlight {
+    color: white;
+    background-color: black;
+    display: inline-block;
+    font-size:18px;
+    letter-spacing:2.9px;
+    @include padding(5px 10px 1px 10px);
+  }
+
+  &--first-letter div {
+    line-height: 35px;
+    font-size:38px;
+    letter-spacing:4px;
+    @include margin(5px null 5px null);
+
+    &::first-letter {
+      vertical-align: top;
+      margin-top: 6px;
+      float: left;
+      font-size:100px;
+      line-height: 75px;
+      padding-right: 3px;
+
+      }
+  }
+
+  &--italic {
+    font-family: $myriad-pro-italic;
+    text-transform: none;
+  }
+
+  &--gray {
+    color: $graytext;
+  }
+
+  &--bold {
+    font-family: $myriad-pro-condensed-bold;
+  }
+
+  &--orange {
+    color: $orange;
+  }
+
+  &--medium-lineheight {
+    line-height: 23px;
+  }
+
+  &--x-small-lineheight{
+    line-height: 13px;
+  }
+  &--no-transform {
+    text-transform: none;
+    font-family: $myriad-pro;
+  }
+
+}
+
+
+p {
+  font-family: $myriad-pro;
+  display: block;
+  font-weight: normal;
+  text-transform: none;
+  font-size: em(17px);
+  line-height: 20px;
+  letter-spacing: 0.1px;
+  display: block;
+  color: black;
+  font-weight: lighter;
+  margin-bottom: 15px;
+}
+
+.paragraph {
+  &--large {
+    font-size: em(18px);
+    letter-spacing: 1.1px;
+    @include media($large-screen-down) {
+      font-size: 14px;
+    }
+  }
+  &--xx-large {
+    font-size: em(38);
+    line-height: 50px;
+  }
+  &--x-large {
+    font-size: em(32);
+    line-height: 32px;
+  }
+  &--dark-background {
+    color: white;
+  }
+  &--gray {
+    color: $lightGray;
+  }
+  &--medium {
+    font-size: em(15px);
+    letter-spacing: 1px;
+  }
+
+  &--small {
+    font-size: em(14px);
+  }
+  &--small-lineheight{
+    line-height: 18px;
+  }
+  &--x-small-lineheight{
+    line-height: 13px;
+  }
+  &--uppercase {
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  &--bold {
+    font-weight: bold;
+  }
+  &--normal {
+    font-family: $myriad-pro;
+  }
+  &--italic {
+    font-family: $myriad-pro-italic;
+    font-style: italic;
+  }
+  &--condensed {
+    font-family: $myriad-pro-condensed;
+  }
+}
+
+a {
+  color: black;
+  @include margin(5px null 5px null);
+  letter-spacing: 0.75px;
+  text-transform: none;
+  font-family: $myriad-pro;
+  line-height: 1em;
+}
+
+
+
+.link {
+  float: left;
+  width: auto;
+  display: inline-flex;
+  cursor: pointer;
+
+  a {
+    font-family: $myriad-pro-bold;
+    font-weight: 800;
+    font-size:18px;
+    padding-bottom: 5px;
+  }
+
+  &--medium {
+    font-size: 15px;
+  }
+
+  &--arrow-right{
+
+    a:after {
+          content: "";
+          background-image: url('../images/right-arrow.svg');
+          position: relative;
+          display: inline-block;
+          background-repeat: no-repeat;
+          background-position: bottom;
+          // background-size: 80% 160%;
+          margin-left: 5px;
+          width: 25px;
+          height: 25px;
+          top: 2px;
+          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+             top: 8px;
+          }
+        }
+
+  }
+
+  &--arrow-right-white{
+    color: white;
+    a:after {
+          background-image: url('../images/right-arrow_white.svg');
+        }
+  }
+
+  &--bred-icon-before {
+    margin-top: 15px;
+    margin-left: 17px;
+    &:before {
+          content: url('../images/bread.svg');
+          position: absolute;
+          width: 18px;
+          margin-top: 1px;
+          margin-left: -20px;
+        }
+  }
+  &--scale-icon-before {
+    margin-left: 17px;
+    &:before {
+          content: url('../images/scale.svg');
+          position: absolute;
+          width: 18px;
+          margin-top: 1px;
+          margin-left: -20px;
+        }
+  }
+
+  &--article-icon-before {
+    margin-left: 17px;
+    &:before {
+          content: url('../images/article.svg');
+          position: absolute;
+          width: 18px;
+          margin-top: 1px;
+          margin-left: -20px;
+        }
+  }
+
+  &--uppercase {
+    text-transform: uppercase;
+  }
+
+  &--dark-background {
+    color: white;
+    &:before, &:after {
+      color: white;
+    }
+  }
+
+  &--orange {
+    color: $orange;
+    font-family: $myriad-pro-condensed;
+  }
+}
+
+.row--three {
+  .small-image-cta-short--dark {
+    .link--arrow-right {
+      a {
+        &::after {
+          background-image: url("../images/right-arrow_white.svg");
+        }
+      }
+    }
+  }
+}
+
+/* Used in article and local pages */
+.cke_editable,
+.body-text {
+  h2 {
+    font-size: 38px;
+    line-height: 38px;
+    text-transform: uppercase;
+    font-family: $myriad-pro-condensed-bold;
+    margin-top: 0;
+  }
+  p {
+    font-family: $myriad-pro-condensed;
+    font-size: 23px;
+    line-height: 28px;
+  }
+  ol {
+    font-family: $myriad-pro-condensed;
+    font-size: 23px;
+    line-height: 28px;
+  }
+  blockquote p {
+    font-size: 62px;
+    line-height: 62px;
+    font-family: $myriad-pro-condensed;
+    margin: 40px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    &:before {
+      position: absolute;
+      z-index: 1;
+      content: "";
+      background-image: url('../images/quotationmarks-left.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      width: 40px;
+      height: 40px;
+      margin-left: -40px;
+      margin-top: -20px;
+
+      @include media($large-screen-down) {
+        background-repeat: no-repeat;
+        background-size: 30px 30px;
+        width: 30px;
+        height: 30px;
+      }
+    }
+    &:after{
+      position: absolute;
+      display: inline-block;
+      content: "";
+      background-image: url('../images/quotationmarks-right.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      width: 40px;
+      height: 40px;
+      z-index: 1;
+      margin-top: 20px;
+      margin-left: 10px;
+      @include media($large-screen-down) {
+        background-repeat: no-repeat;
+        background-size: 30px 30px;
+        width: 50px;
+        height: 30px;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+    }
+  }
+  img {
+    width: 100%;
+  }
+  a {
+    border-bottom: 2px solid $orange;
+    font-weight: bold;
+  }
+  ul {
+    li {
+      font-family: $myriad-pro;
+      font-size: 23px;
+      line-height: 28px;
+      list-style: none;
+      &:before {
+        content: "• ";
+        color: $orange;
+        margin-right: 3px;
+      }
+    }
+  }
+  strong {
+    font-family: $myriad-pro-condensed-bold;
+    color: #3b3b3b;
+  }
+  // Underlined text, "u" tag by CKEditor
+  u {
+    text-decoration: none;
+    border-bottom: 2px solid #F99D1C;
+  }
+}
+
+/* Used in article pages for categories block */
+.column--two-newsmedia {
+  padding: 0 30px 30px 0px;
+  .views-element-container {
+    .views-row {
+      .name {
+        a {
+          margin: 0 0 0 -30px;
+          text-transform: uppercase;
+          color: $orange;
+          font-family: $myriad-pro-condensed-bold;
+          font-size: 26px;
+          line-height: 29px;
+          list-style: none;
+          letter-spacing: 1.9px;
+          font-weight: bold;
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+#popup-text > p {
+  letter-spacing: 0.1px;
+  display: block;
+}
+
+#block-sample3-content {
+  div.column.column--one.body-text {
+    ul {
+      li {
+        font-family: $myriad-pro-condensed;
+      }
+    }
+    p {
+      a {
+        font-family: $myriad-pro-condensed;
+      }
+
+    }
+  }
+  article {
+    div.row.row--white.row--three.row--constrain > div > div > div > ul {
+      @extend .vdm-bullet-list;
+      font-family: $myriad-pro;
+      text-transform: none;
+      font-size: 1.0625em;
+      line-height: 20px;
+      letter-spacing: 0.1px;
+      font-weight: lighter;
+      margin-bottom: 15px;
+    }
+    div.paragraph.paragraph--large.paragraph--normal > div > ul {
+      @extend .vdm-bullet-list;
+      letter-spacing: 0.1px;
+      line-height: 16px;
+    }
+    .body-text {
+      a {
+        font-family: $myriad-pro-condensed;
+      }
+      ul {
+        li {
+          @extend .vdm-bullet-list;
+          font-family: $myriad-pro-condensed;
+          font-size: 23px;
+          line-height: 20px;
+          font-weight: lighter;
+          letter-spacing: 0.1px;
+          display: block;
+          color: black;
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+}
+
+// Duplicate the styles from the above #block-sample3-content
+// for CKEditor. See: https://mirumeurope.atlassian.net/browse/VSM-489
+.cke_editable {
+  ul {
+    li {
+      @extend .vdm-bullet-list;
+      font-family: $myriad-pro-condensed;
+      font-size: 23px;
+      line-height: 20px;
+      font-weight: lighter;
+      letter-spacing: 0.1px;
+      display: block;
+      color: black;
+      margin-bottom: 15px;
+    }
+  }
+  a {
+    font-family: $myriad-pro-condensed;
+    text-decoration: none;
+  }
+}

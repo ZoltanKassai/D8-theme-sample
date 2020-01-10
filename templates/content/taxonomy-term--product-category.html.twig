@@ -1,0 +1,64 @@
+<!-- Taxonomy Term Product Category -->
+<div class="page-hero-wrapper">
+<div class="page-hero page-hero--dark page-hero--opacity-30 page-hero--tall"  style="background-image: url('{{ file_url(content.field_image['#items'].entity.uri.value) }}')">
+  <div class="page-hero__inner">
+    <div class="intro-text">
+      <span class="heading heading--highlight">{{ "Our Products"|trans }}</span>
+  		<h1 class="heading">{{ content.field_title }}</h1>
+    </div>
+  </div>
+</div>
+<div class="breadcrumb">
+    {{ drupal_block('sample3_breadcrumbs') }}
+  </div>
+</div>
+<div class="row row--white row--one row--constrain">
+    <div class="row-inner">
+    
+        <div class="product-category-info product-category-info--white">
+          <div class="main-description">
+            <h2 class="heading heading--large">{{ content.field_body_title.0['#context']['value'] }}</h2>
+            <div class="paragraph paragraph--large paragraph--normal">
+              {{ content.field_body.0['#text']|raw }}
+            </div>
+          </div>
+          <div class="know-more block">{{ drupal_entity('block_content', 46) }}</div>
+        </div>
+
+    </div>
+</div>
+
+{% if term_parent_count == 0 %}
+    <div class="row row--white row--one row--constrain">
+      <div class="row-inner">
+        <div class="product-categories">
+            {{  subcategories|render }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row row--white row--one row--constrain">
+      <div class="row-inner brands-container">
+          <div class="brands-heading">
+            <h2>{{ 'Our Brands'|trans }}</h2>
+          </div>
+          <div class="product-brands">
+            {% for brand in brands['#rows'][0]['#rows'] %}
+              <div class="product-brand" style="background-image: url('{{ file_url(brand['#row']._entity.fields.field_logo.entity.uri.value) }}')">
+                <a href="{{ path('entity.node.canonical', {'node': brand['#row']._entity.fields.nid.value}) }}">
+                  {{ brand['#row']._entity.fields.title.value }}
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+      </div>
+    </div>
+{% else %}
+    <div class="row row--white row--one row--constrain ">
+      <div class="row-inner">
+        <div class="products">
+        {{ products }}
+        </div>
+      </div>
+    </div>
+{% endif %}
